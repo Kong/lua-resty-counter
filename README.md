@@ -3,6 +3,8 @@ Name
 
 lua-resty-counter - Lock-free counter for OpenResty.
 
+![Build Status](https://travis-ci.com/kong/lua-resty-counter.svg?branch=master) ![luarocks](https://img.shields.io/luarocks/v/kong/lua-resty-counter?color=%232c3e67)
+
 Table of Contents
 =================
 
