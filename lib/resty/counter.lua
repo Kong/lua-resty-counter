@@ -1,6 +1,10 @@
 local ngx_shared = ngx.shared
 local clear_tab = require("table.clear")
-
+local pairs = pairs
+local ngx = ngx
+local error = error
+local setmetatable = setmetatable
+local tonumber = tonumber
 
 local _M = {}
 local mt = { __index = _M }
