@@ -1,10 +1,22 @@
 local ngx_shared = ngx.shared
-local clear_tab = require("table.clear")
 local pairs = pairs
 local ngx = ngx
 local error = error
 local setmetatable = setmetatable
 local tonumber = tonumber
+
+local clear_tab
+do
+  local ok
+  ok, clear_tab = pcall(require, "table.clear")
+  if not ok then
+    clear_tab = function(tab)
+      for k in pairs(tab) do
+        tab[k] = nil
+      end
+    end
+  end
+end
 
 local _M = {}
 local mt = { __index = _M }
