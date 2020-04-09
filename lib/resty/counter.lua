@@ -18,7 +18,9 @@ do
   end
 end
 
-local _M = {}
+local _M = {
+  _VERSION = '0.2.1'
+}
 local mt = { __index = _M }
 
 -- local cache of counters increments
