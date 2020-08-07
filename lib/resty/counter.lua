@@ -1,7 +1,6 @@
 local ngx_shared = ngx.shared
 local pairs = pairs
 local ngx = ngx
-local error = error
 local setmetatable = setmetatable
 local tonumber = tonumber
 
@@ -49,7 +48,7 @@ function _M.new(shdict_name, sync_interval)
   id = ngx.worker.id()
 
   if not ngx_shared[shdict_name] then
-    error("shared dict \"" .. (shdict_name or "nil") .. "\" not defined", 2)
+    return nil, "shared dict \"" .. (shdict_name or "nil") .. "\" not defined"
   end
 
   if not increments[shdict_name] then
@@ -64,7 +63,7 @@ function _M.new(shdict_name, sync_interval)
   if sync_interval then
     sync_interval = tonumber(sync_interval)
     if not sync_interval or sync_interval < 0 then
-      error("expect sync_interval to be a positive number", 2)
+      return nil, "expect sync_interval to be a positive number"
     end
     if not timer_started[shdict_name] then
       ngx.log(ngx.DEBUG, "start timer for shdict ", shdict_name, " on worker ", id)
