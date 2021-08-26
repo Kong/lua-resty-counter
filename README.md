@@ -36,12 +36,15 @@ API
 
 ## counter.new
 
-**syntax**: *c, err = counter.new(shdict_name, sync_interval?)*
+**syntax**: *c, err = counter.new(shdict_name, sync_interval?, init_ttl?)*
 
 Create a new counter instance. Take first argument as the shared dict name in
 string. And an optional second argument as interval to sync local state to
 shared dict in number. If second argument is omitted, local counter will not be
 synced automatically, user are responsible to call `counter:sync` on each worker.
+The optional init_ttl argument specifies expiration time (in seconds) of the value
+since the time it is initialized. The time resolution is 0.001 seconds. If init_ttl
+takes the value 0 (which is the default), then the item will never expire.
 
 [Back to TOC](#table-of-contents)
 
@@ -65,10 +68,10 @@ default to `1`.
 
 ## counter.reset
 
-**syntax**: *newval, err, forcible? = counter:reset(key, number)*
+**syntax**: *newval, err, forcible? = counter:reset(key, number, init_ttl?)*
 
 Reset the counter in shdict with a decrease of `number`. This function is a wrapper of
-`ngx.shared.DICT:incr(key, -number, number)`, please refer to
+`ngx.shared.DICT:incr(key, -number, number, init_ttl)`, please refer to
 [lua-nginx-module doc](https://github.com/openresty/lua-nginx-module#ngxshareddictincr)
 for return values.
 

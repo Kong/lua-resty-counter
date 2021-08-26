@@ -30,11 +30,11 @@ local timer_started = {}
 
 local id
 
-local function sync(_, self)
+local function sync(_, self, init_ttl)
   local err, _
   local ok = true
   for k, v in pairs(self.increments) do
-    _, err, _ = self.dict:incr(k, v, 0)
+    _, err, _ = self.dict:incr(k, v, 0, init_ttl)
     if err then
       ngx.log(ngx.WARN, "error increasing counter in shdict key: ", k, ", err: ", err)
       ok = false
@@ -45,7 +45,7 @@ local function sync(_, self)
   return ok
 end
 
-function _M.new(shdict_name, sync_interval)
+function _M.new(shdict_name, sync_interval, init_ttl)
   id = ngx.worker.id()
 
   if not ngx_shared[shdict_name] then
@@ -68,7 +68,10 @@ function _M.new(shdict_name, sync_interval)
     end
     if not timer_started[shdict_name] then
       ngx.log(ngx.DEBUG, "start timer for shdict ", shdict_name, " on worker ", id)
-      ngx.timer.every(sync_interval, sync, self)
+      if not init_ttl then
+	init_ttl = 0
+      end
+      ngx.timer.every(sync_interval, sync, self, init_ttl)
       timer_started[shdict_name] = true
     end
   end
@@ -91,11 +94,14 @@ function _M:incr(key, step)
   return true
 end
 
-function _M:reset(key, number)
+function _M:reset(key, number, init_ttl)
   if not number then
     return nil, "expect a number at #2"
   end
-  return self.dict:incr(key, -number, number)
+  if not init_ttl then
+    init_ttl = 0
+  end
+  return self.dict:incr(key, -number, number, init_ttl)
 end
 
 function _M:get(key)
